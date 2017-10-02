@@ -1,8 +1,51 @@
 const checkedAmens = {};
+const checkedStates = {};
+const checkedCities = {};
 const notFound = [
   '<h2 id="no_places_found">No places found :(</h2>',
   '<img src="static/images/guillaume.jpeg">'
 ];
+
+function updateHeader (headerVal) {
+  if (headerVal === 'states-cities') {
+    let statesString = Object.keys(checkedStates).join(', ');
+    let citiesString = Object.keys(checkedCities).join(', ');
+    let hString = statesString + ' ' + citiesString;
+    $('.locations H4').text(hString);
+  } else {
+    let hString = Object.keys(checkedAmens).join(', ');
+    $('.amenities H4').text(hString);
+  }
+}
+
+function stateCityCheck () {
+  let allStatesInput = $('.locations UL H2 INPUT');
+  let allCitiesInput = $('.locations UL UL LI INPUT');
+
+  allStatesInput.each(function () {
+    $(this).change(function () {
+      if ($(this).prop('checked')) {
+        checkedStates[this.name] = this.id;
+        updateHeader('states-cities');
+      } else {
+        delete checkedStates[this.name];
+        updateHeader('states-cities');
+      }
+    });
+  });
+
+  allCitiesInput.each(function () {
+    $(this).change(function () {
+      if ($(this).prop('checked')) {
+        checkedCities[this.name] = this.id;
+        updateHeader('states-cities');
+      } else {
+        delete checkedCities[this.name];
+        updateHeader('states-cities');
+      }
+    });
+  });
+}
 
 function amenCheck () {
   let allAmenInputs = $('.amenities INPUT');
@@ -10,12 +53,10 @@ function amenCheck () {
     $(this).change(function () {
       if ($(this).prop('checked')) {
         checkedAmens[this.name] = this.id;
-        let itemsString = Object.keys(checkedAmens).join(', ');
-        $('.amenities H4').text(itemsString);
+        updateHeader('amenities');
       } else {
         delete checkedAmens[this.name];
-        let itemsString = Object.keys(checkedAmens).join(', ');
-        $('.amenities H4').text(itemsString);
+        updateHeader('amenities');
       }
     });
   });
@@ -45,7 +86,11 @@ function generatePlaces () {
   $.ajax({
     url: 'http://0.0.0.0:5001/api/v1/places_search/',
     type: 'POST',
-    data: JSON.stringify({'amenities': Object.values(checkedAmens)}),
+    data: JSON.stringify({
+      'states': Object.values(checkedStates),
+      'cities': Object.values(checkedCities),
+      'amenities': Object.values(checkedAmens)
+    }),
     contentType: 'application/json; charset=utf-8',
     dataType: 'json',
     success: function (data) {
@@ -110,5 +155,6 @@ function searchButton () {
 $(window).on('load', function () {
   checkStatus();
   amenCheck();
+  stateCityCheck();
   searchButton();
 });
