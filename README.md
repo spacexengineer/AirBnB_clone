@@ -3,8 +3,8 @@
 # AirBnB Clone
 
 <p>
-<image src="https://s3.amazonaws.com/intranet-projects-files/h
-olbertonschool-higher-level_programming+/309/hbnb_1_2.jpg" />
+ <img src="https://s3.amazonaws.com/intranet-projects-files/holbertonschool-higher-lev
+el_programming+/309/hbnb_1_2.jpg" alt="app_demo"/>
 </p>
 
 ## Description
